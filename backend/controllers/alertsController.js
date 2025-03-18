@@ -3,7 +3,6 @@ const twilioClient = require('../config/twilio');
 
 exports.sendAlert = (req, res) => {
     const { message, to } = req.body;
-
     twilioClient.messages.create({
         body: message,
         from: process.env.TWILIO_PHONE_NUMBER,
