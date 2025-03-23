@@ -2,7 +2,9 @@
 const express = require('express');
 const router = express.Router();
 const businessController = require('../controllers/businessController');
+const passport = require('passport');
 
-router.get('/', businessController.getBusinessData);
+// Protect the route with JWT middleware
+router.get('/', passport.authenticate('jwt', { session: false }), businessController.getBusinessData);
 
 module.exports = router;

@@ -1,8 +1,9 @@
-// filepath: backend/routes/weatherRoutes.js
 const express = require('express');
 const router = express.Router();
 const weatherController = require('../controllers/weatherController');
+const passport = require('passport');
 
-router.get('/', weatherController.getWeather);
+// Protect the route with JWT middleware
+router.get('/', passport.authenticate('jwt', { session: false }), weatherController.getWeather);
 
 module.exports = router;
