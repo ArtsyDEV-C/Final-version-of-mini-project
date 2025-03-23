@@ -5,14 +5,24 @@ document.getElementById("industry").addEventListener("change", function () {
 
 async function fetchIndustryData(industry) {
     document.getElementById("loading-indicator").style.display = "block";
-    const response = await fetch(`/api/business/weather?industry=${industry}`);
-    const data = await response.json();
-    document.getElementById("loading-indicator").style.display = "none";
+    try {
+        const response = await fetch(`/api/business/weather?industry=${industry}`, {
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
+            }
+        });
+        const data = await response.json();
+        document.getElementById("loading-indicator").style.display = "none";
 
-    if (data.success) {
-        displayIndustryData(data.analytics);
-    } else {
-        document.getElementById("industry-description").innerText = "No data available for the selected industry.";
+        if (data.success) {
+            displayIndustryData(data.analytics);
+        } else {
+            document.getElementById("industry-description").innerText = "No data available for the selected industry.";
+        }
+    } catch (error) {
+        console.error("Failed to fetch industry data:", error);
+        document.getElementById("loading-indicator").style.display = "none";
+        document.getElementById("industry-description").innerText = "Failed to fetch data. Please try again later.";
     }
 }
 
@@ -27,5 +37,7 @@ function displayIndustryData(analytics) {
     `;
 }
 
-// Initial call to fetch data for the default industry (e.g., Agriculture)
-fetchIndustryData("agriculture");
+// Automatically load default industry (e.g., Agriculture) on page start
+window.addEventListener("DOMContentLoaded", () => {
+    fetchIndustryData("agriculture");
+});

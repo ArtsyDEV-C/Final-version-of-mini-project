@@ -1,28 +1,32 @@
-// ...existing code...
 async function getChatbotResponse(message) {
-    try {
-        // Fetch chatbot response from the backend
-        const response = await fetch(`/api/chatbot?message=${message}`);
-        const data = await response.json();
+    if (!message.trim()) return;
 
-        // Display chatbot response
-        document.getElementById("chatbot-response").innerText = data.response;
+    try {
+        const response = await fetch("/api/chatbot/response", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ message })
+        });
+
+        const data = await response.json();
+        document.getElementById("chatbot-response").textContent = data.response;
     } catch (error) {
-        console.error("Error fetching chatbot response:", error);
+        console.error("Chatbot fetch failed:", error.message);
+        document.getElementById("chatbot-response").textContent = "Something went wrong!";
     }
 }
 
-// Function to clear the chatbot input and response fields
 function clearChatbot() {
     document.getElementById("chatbot-input").value = "";
-    document.getElementById("chatbot-response").innerText = "";
+    document.getElementById("chatbot-response").textContent = "";
 }
 
-// Event listener for the send message button
 document.getElementById("send-message-btn").addEventListener("click", () => {
     const message = document.getElementById("chatbot-input").value;
     getChatbotResponse(message);
 });
 
-// Event listener for the clear button
 document.getElementById("clear-chatbot-btn").addEventListener("click", clearChatbot);

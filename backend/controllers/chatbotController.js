@@ -3,8 +3,11 @@ const axios = require('axios');
 const ChatHistory = require('../models/ChatHistory');
 
 exports.getChatHistory = async (req, res) => {
+    const { limit = 100, user } = req.query;
+
     try {
-        const history = await ChatHistory.find().limit(100).sort({ createdAt: -1 });
+        const query = user ? { user } : {};
+        const history = await ChatHistory.find(query).limit(parseInt(limit)).sort({ createdAt: -1 });
         res.json(history);
     } catch (error) {
         console.error("Chat history fetch error:", error.message);

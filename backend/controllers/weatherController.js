@@ -11,6 +11,12 @@ exports.getWeather = async (req, res) => {
 
     try {
         const data = await getWeatherData(lat, lon);
+
+        // Cache the result
+        if (res.locals.cacheKey) {
+            weatherCache.set(res.locals.cacheKey, data);
+        }
+
         res.json(data);
     } catch (error) {
         console.error("Weather API error:", error.message);

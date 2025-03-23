@@ -2,8 +2,11 @@ const axios = require('axios');
 const RouteData = require('../models/RouteData');
 
 exports.getRoutes = async (req, res) => {
+    const { user, limit = 100, sort = '-createdAt' } = req.query;
+
     try {
-        const routes = await RouteData.find().limit(100).sort({ createdAt: -1 });
+        const query = user ? { user } : {};
+        const routes = await RouteData.find(query).limit(parseInt(limit)).sort(sort);
         res.json(routes);
     } catch (error) {
         console.error("Route fetch error:", error.message);
@@ -14,7 +17,6 @@ exports.getRoutes = async (req, res) => {
 exports.getRoute = async (req, res) => {
     const { start, end } = req.body;
 
-    // Validate input
     if (
         !Array.isArray(start) || start.length !== 2 ||
         !Array.isArray(end) || end.length !== 2 ||
@@ -34,6 +36,20 @@ exports.getRoute = async (req, res) => {
                 }
             }
         );
+
+        // Optionally save the generated route to the database
+        const newRoute = new RouteData({
+            routeName: `Route from ${start} to ${end}`,
+            user: req.user._id,
+            data: {
+                coordinates: orsRes.data.features[0].geometry.coordinates,
+                distance: orsRes.data.features[0].properties.segments[0].distance,
+                duration: orsRes.data.features[0].properties.segments[0].duration,
+                summary: orsRes.data.features[0].properties.summary
+            }
+        });
+        await newRoute.save();
+
         res.json(orsRes.data);
     } catch (error) {
         console.error("Route API error:", error.message);

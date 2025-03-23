@@ -64,3 +64,21 @@ async function fetchCityWeather(city) {
         alert('City not found!');
     }
 }
+
+// Add location search with geocoding
+document.getElementById('search-location-btn').addEventListener('click', async () => {
+    const location = document.getElementById('location-input').value;
+    if (!location) return;
+
+    const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(location)}&format=json`);
+    const geoData = await geoRes.json();
+
+    if (geoData.length > 0) {
+        const { lat, lon } = geoData[0];
+        map.setView([lat, lon], 10);
+        L.marker([lat, lon]).addTo(map).bindPopup(location).openPopup();
+        fetchWeather(lat, lon); // call your existing weather fetcher
+    } else {
+        alert("Location not found!");
+    }
+});

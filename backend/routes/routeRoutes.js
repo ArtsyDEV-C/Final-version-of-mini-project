@@ -6,6 +6,6 @@ const passport = require('passport');
 
 // Protect the routes with JWT middleware
 router.get('/', passport.authenticate('jwt', { session: false }), routeController.getRoutes);
-router.post('/route', passport.authenticate('jwt', { session: false }), routeController.getRoute);
+router.post('/generate', passport.authenticate('jwt', { session: false }), routeController.getRoute);
 
 module.exports = router;
