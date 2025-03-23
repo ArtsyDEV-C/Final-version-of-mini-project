@@ -1,11 +1,14 @@
 // weatherMap.js - Handle map rendering and weather data fetching
 
-const map = L.map('weather-map').setView([51.505, -0.09], 13); // Default to London
+const map = L.map('weather-map').setView([12.9716, 77.5946], 10); // Default to Bangalore
 
 // Set up the map tile layer
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    attribution: 'Map data © OpenStreetMap contributors'
 }).addTo(map);
+
+// Add a sample marker
+L.marker([12.9716, 77.5946]).addTo(map).bindPopup("You're here!").openPopup();
 
 // Function to fetch weather data from the backend for a specific lat, lon
 async function fetchWeather(lat, lon) {

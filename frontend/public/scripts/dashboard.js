@@ -24,6 +24,16 @@ document.addEventListener('DOMContentLoaded', async function() {
         listItem.innerText = alert;
         alertsList.appendChild(listItem);
     });
+
+    // Request notification permission
+    Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+            new Notification("Weather Alert", {
+                body: "A flood alert has been issued!",
+                icon: "/images/alert-icon.png"
+            });
+        }
+    });
 });
 
 // Fetch user data (simulate an API call)
